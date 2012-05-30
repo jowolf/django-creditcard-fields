@@ -3,11 +3,12 @@ from datetime import date
 from calendar import monthrange, IllegalMonthError
 from django import forms
 from django.conf import settings
+from django.template.defaultfilters import date as _date
 from django.utils.translation import ugettext_lazy as _
 
 
 CREDIT_CARD_RE = r'^(?:4[0-9]{12}(?:[0-9]{3})?|5[1-5][0-9]{14}|6(?:011|5[0-9][0-9])[0-9]{12}|3[47][0-9]{13}|3(?:0[0-5]|[68][0-9])[0-9]{11}|(?:2131|1800|35\\d{3})\d{11})$'
-MONTH_FORMAT = getattr(settings, 'MONTH_FORMAT', '%b')
+MONTH_FORMAT = getattr(settings, 'MONTH_FORMAT', 'M')
 VERIFICATION_VALUE_RE = r'^([0-9]{3,4})$'
 
 
@@ -69,7 +70,7 @@ class ExpiryDateField(forms.MultiValueField):
         if 'initial' not in kwargs:
             # Set default expiry date based on current month and year
             kwargs['initial'] = today
-        months = [(x, '%02d (%s)' % (x, date(2000, x, 1).strftime(MONTH_FORMAT))) for x in xrange(1, 13)]
+        months = [(x, '%02d (%s)' % (x, _date(date(2000, x, 1), MONTH_FORMAT))) for x in xrange(1, 13)]
         years = [(x, x) for x in xrange(today.year, today.year + 15)]
         fields = (
             forms.ChoiceField(choices=months, error_messages={'invalid': error_messages['invalid_month']}),
