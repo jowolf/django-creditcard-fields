@@ -18,8 +18,8 @@ class CreditCardField(forms.CharField):
     """
 
     default_error_messages = {
-        'required': _(u'Please enter a credit card number.'),
-        'invalid': _(u'The credit card number you entered is invalid.'),
+        'required': _('Please enter a credit card number.'),
+        'invalid': _('The credit card number you entered is invalid.'),
     }
 
     def __init__(self, *args, **kwargs):
@@ -28,8 +28,8 @@ class CreditCardField(forms.CharField):
 
     def clean(self, value):
         def is_luhn_valid(cc):
-            num = map(int, cc)
-            return not sum(num[::-2] + map(lambda d: sum(divmod(d * 2, 10)), num[-2::-2])) % 10
+            num = [int(d) for d in cc]
+            return not sum(num[::-2] + [sum(divmod(d * 2, 10)) for d in num[-2::-2]]) % 10
 
         value = value and value.replace(' ', '').replace('-', '')
         if self.required and not value:
@@ -48,7 +48,7 @@ class ExpiryDateWidget(forms.MultiWidget):
         return [value.month, value.year] if value else [None, None]
 
     def format_output(self, rendered_widgets):
-        return u'<div class="expirydatefield">%s</div>' % ' '.join(rendered_widgets)
+        return '<div class="expirydatefield">%s</div>' % ' '.join(rendered_widgets)
 
 
 class ExpiryDateField(forms.MultiValueField):
@@ -57,9 +57,9 @@ class ExpiryDateField(forms.MultiValueField):
     """
 
     default_error_messages = {
-        'invalid_month': _(u'Please enter a valid month.'),
-        'invalid_year': _(u'Please enter a valid year.'),
-        'date_passed': _(u'This expiry date has passed.'),
+        'invalid_month': _('Please enter a valid month.'),
+        'invalid_year': _('Please enter a valid year.'),
+        'date_passed': _('This expiry date has passed.'),
     }
 
     def __init__(self, *args, **kwargs):
@@ -70,8 +70,8 @@ class ExpiryDateField(forms.MultiValueField):
         if 'initial' not in kwargs:
             # Set default expiry date based on current month and year
             kwargs['initial'] = today
-        months = [(x, '%02d (%s)' % (x, _date(date(2000, x, 1), MONTH_FORMAT))) for x in xrange(1, 13)]
-        years = [(x, x) for x in xrange(today.year, today.year + 15)]
+        months = [(x, '%02d (%s)' % (x, _date(date(2000, x, 1), MONTH_FORMAT))) for x in range(1, 13)]
+        years = [(x, x) for x in range(today.year, today.year + 15)]
         fields = (
             forms.ChoiceField(choices=months, error_messages={'invalid': error_messages['invalid_month']}),
             forms.ChoiceField(choices=years, error_messages={'invalid': error_messages['invalid_year']}),
@@ -113,8 +113,8 @@ class VerificationValueField(forms.CharField):
 
     widget = forms.TextInput(attrs={'maxlength': 4})
     default_error_messages = {
-        'required': _(u'Please enter the three- or four-digit verification code for your credit card.'),
-        'invalid': _(u'The verification value you entered is invalid.'),
+        'required': _('Please enter the three- or four-digit verification code for your credit card.'),
+        'invalid': _('The verification value you entered is invalid.'),
     }
 
     def clean(self, value):
