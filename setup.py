@@ -3,7 +3,7 @@
 from distutils.core import setup
 
 setup(name='django-creditcard-fields',
-      version='1.0',
+      version='1.1',
       description='Credit Card Fields for Django',
       author='Jordan Reiter, based on Bryan Chow',
       author_email='jordanreiter@gmail.com',
